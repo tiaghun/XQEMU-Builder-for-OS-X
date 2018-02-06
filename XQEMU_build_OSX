@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#Exports
+export PATH=$PATH:/opt/local/bin
+export PATH=$PATH:/usr/local/bin
+
+#Download XQEMU source and switch to temp directory
+git clone https://github.com/xqemu/xqemu.git
+cd xqemu/
+
+#Download XQEMU dependencies.
+git clone git://git.qemu-project.org/dtc
+git clone git://anongit.freedesktop.org/pixman
+
+#Configure, build, and install
+./configure --cc=clang --enable-opengl --disable-vnc --disable-user --disable-kvm --disable-xen --with-coroutine=sigaltstack --target-list=xbox-softmmu --enable-debug >> ../XQEMU_build.log
+make >> ../XQEMU_build.log
+make install >> ../XQEMU_build.log
+
+#Change from and delete temp directory.
+cd ../
+chown -R $(whoami) xqemu/
+chmod -R a+rw xqemu/
+chmod -R a+rw xqemu/*
+rm -rf xqemu/
